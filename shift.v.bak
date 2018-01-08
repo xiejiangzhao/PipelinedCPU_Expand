@@ -1,0 +1,22 @@
+module ShiftLeft2
+(
+	input [31:0] A,
+	output [31:0] result
+);
+assign result = A << 2;
+endmodule
+
+module SignExtand
+(
+	input [15:0] imm16,
+	input EXTOp,
+	output reg [31:0] ext
+);
+always @(imm16,EXTOp)
+begin
+	if(EXTOp & imm16[15])
+		ext = {16'hffff,imm16};
+	else
+		ext = {16'h0000,imm16};
+end
+endmodule

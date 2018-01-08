@@ -1,0 +1,14 @@
+Analysis & Synthesis Status : Successful - Sat Jan 23 21:58:27 2010
+Quartus II Version : 9.0 Build 132 02/25/2009 SJ Full Version
+Revision Name : PipelineCPU
+Top-level Entity Name : PipelineCPU
+Family : Cyclone II
+Total logic elements : 123
+    Total combinational functions : 122
+    Dedicated logic registers : 44
+Total registers : 44
+Total pins : 476
+Total virtual pins : 0
+Total memory bits : 0
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0

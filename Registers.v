@@ -1,0 +1,150 @@
+module Registers
+(
+	input CLK,
+	input [4:0] Ra,Rb,Rw,
+	output [31:0] Da,Db,
+	input [31:0] Dw,
+	input RegWr,
+	output [31:0] Data,
+	input [31:0] Rt,
+	output [31:0] Dt
+);
+reg [31:0] Rs[31:0];
+always @( negedge CLK)
+begin
+	if(RegWr)
+		Rs[Rw] <= Dw;
+	Rs[0]=32'b0000_0000_0000_0000_0000_0000_0000_1000;
+	Rs[1]=32'b0000_0000_0000_0000_0000_0000_0000_0010;
+	Rs[3]=32'b0000_0000_0000_0000_0000_0000_0000_1000;
+end
+assign Da = Rs[Ra];
+assign Db = Rs[Rb];
+assign Data = Rs[2];
+assign Dt = Rs[Rt];
+endmodule
+
+module PCReg
+(
+	input CLK,
+	input RESET,
+	input [31:0] NPC,
+	output reg [31:0] PC
+);
+always @ (posedge CLK)
+begin
+	if(RESET)
+		PC <= 32'b0;
+	else
+		PC <= NPC;
+end
+endmodule
+
+module id_ex_register(clk,extop1,alusrc1,aluop1,regdst1,memwr1,memtoreg1,sign1,chsresult1,wrsrc1,siftop1,mergeop1,regwr1,siftsrc1,imm16_1,da1,db1,rs1,rt1,branch1,jump1,
+extop,alusrc,aluop,regdst,memwr,memtoreg,sign,chsresult,wrsrc,siftop,mergeop,regwr,siftsrc,imm16,da,db,rs,rt,branch,jump);
+input extop1,alusrc1,regdst1,memwr1,memtoreg1,sign1,chsresult1,wrsrc1,mergeop1,regwr1,clk,siftsrc1,branch1,jump1;
+input [4:0] rt1,rs1;
+input [3:0] aluop1;
+input [1:0] siftop1;
+input [15:0] imm16_1;
+input [31:0] da1,db1;
+
+output reg extop,regdst,memwr,memtoreg,alusrc,sign,chsresult,wrsrc,mergeop,regwr,siftsrc,branch,jump;
+output reg [3:0] aluop;
+output reg [1:0] siftop;
+output reg [15:0] imm16;
+output reg [31:0] da,db;
+output reg [4:0] rt,rs;
+
+always @(posedge clk)
+begin
+extop=extop1;
+alusrc=alusrc1;
+regdst=regdst1;
+memwr=memwr1;
+memtoreg=memtoreg1;
+sign=sign1;
+chsresult=chsresult1;
+mergeop=mergeop1;
+regwr=regwr1;
+aluop=aluop1;
+siftop=siftop1;
+siftsrc=siftsrc1;
+imm16=imm16_1;
+da=da1;
+db=db1;
+rt=rt1;
+wrsrc=wrsrc1;
+rs=rs1;
+jump=jump1;
+branch=branch1;
+end
+endmodule
+
+//Define the EX/MEM Register
+module ex_mem_register(clk,memwr1,memtoreg1,sign1,wrsrc1,mergeop1,regwr1,rw1,result1,overflow1,data_rt1,
+memwr,memtoreg,sign,wrsrc,mergeop,regwr,rw,result,overflow,data_rt);
+input clk,memwr1,memtoreg1,sign1,wrsrc1,mergeop1,regwr1,overflow1;
+input [4:0] rw1;
+input [31:0] result1,data_rt1;
+
+output reg memwr,memtoreg,sign,wrsrc,mergeop,regwr,overflow;
+output reg [4:0] rw;
+output reg [31:0] result,data_rt;
+
+always @(posedge clk)
+begin
+memwr=memwr1;
+memtoreg=memtoreg1;
+sign=sign1;
+wrsrc=wrsrc1;
+mergeop=mergeop1;
+regwr=regwr1;
+rw=rw1;
+overflow=overflow1;
+result=result1;
+data_rt=data_rt1;
+end
+
+endmodule
+
+//Define the MEM/WR Register
+module mem_wr_register(clk,data1,memtoreg1,sign1,regwr1,rw1,overflow1,result1,data,memtoreg,sign,regwr,rw,overflow,result);
+input clk,memtoreg1,sign1,regwr1,overflow1;
+input [4:0] rw1;
+input [31:0] data1,result1;
+
+output reg memtoreg,sign,regwr,overflow;
+output reg [4:0] rw;
+output reg [31:0] data,result;
+
+always @(posedge clk)
+begin
+memtoreg=memtoreg1;
+sign=sign1;
+regwr=regwr1;
+rw=rw1;
+overflow=overflow1;
+data=data1;
+result=result1;
+end
+
+endmodule
+
+module Old_DataRegs 
+(
+	input CLK,
+	input [5:0] mem_wr_reg_Rw,
+	input [31:0] mem_wr_reg_ALUOut,
+	input mem_wr_reg_RegWr,
+	output reg [5:0] old_data_reg_Rw,
+	output reg [31:0] old_data_reg_ALUOut,
+	output reg old_data_reg_RegWr
+);
+always @(posedge CLK)
+begin
+	old_data_reg_Rw <= mem_wr_reg_Rw;
+	old_data_reg_ALUOut <= mem_wr_reg_ALUOut;
+	old_data_reg_RegWr <= mem_wr_reg_RegWr;
+end
+endmodule

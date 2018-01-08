@@ -1,0 +1,30 @@
+module InstructionMemory
+(
+	input RESET,
+	input [3:0] addr,
+	output reg [31:0] data
+);
+reg [31:0] ram [15:0];
+always @(RESET)
+if(RESET)
+	begin
+		ram[0]=32'h0043F800;//add
+		ram[1]=32'h0081F022;//sub
+		ram[2]=32'h03C0E820;//clz
+		ram[3]=32'h0022E02A;//slt
+		ram[4]=32'h0022D804;//sllv
+		ram[5]=32'h0022D003;//sra
+		ram[6]=32'h2039007F;//addi
+		ram[7]=32'h18200003;//blez
+		ram[8]=32'h19200001;//blez
+		ram[9]=32'h0043F800;//add
+		ram[10]=32'h3839000F;//xori
+		ram[11]=32'h8C380003;//lw
+		ram[12]=32'h88370000;//lwl
+		ram[13]=32'h983C0000;//lwr
+		ram[14]=32'hAC370003;//sw
+		ram[15]=32'h08000003;//j
+	end
+always @(addr)
+	data <=ram[addr];
+endmodule

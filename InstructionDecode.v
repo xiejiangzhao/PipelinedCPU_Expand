@@ -1,0 +1,349 @@
+module InstructionDecode(
+input [31:0] ir,
+output reg extop,
+output reg alusrc,
+output reg [3:0] aluop,
+output reg regdst,memwr,branch,memtoreg,
+output reg sign,
+output reg chsresult,jump,wrsrc,
+output reg [1:0] siftop,
+output reg mergeop,regwr,siftsrc
+);
+reg [5:0] op;
+reg [5:0] funct;
+
+
+always 
+begin
+op=ir[31:26];
+funct=ir[5:0];
+case(op)
+	6'b001000://addi
+	begin
+	extop=1;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b0000;
+	memwr=0;
+	branch=0;
+	memtoreg=0;
+	regwr=1;
+	sign=0;
+	chsresult=0;
+	jump=0;
+	siftop=2'b00;
+	end
+	6'b001001://addiu
+	begin
+	extop=1;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b0000;
+	memwr=0;
+	branch=0;
+	memtoreg=0;
+	regwr=1;
+	sign=0;
+	chsresult=0;
+	jump=0;
+	siftop=2'b00;
+	end
+	6'b001110://xori
+	begin
+	extop=0;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b1001;
+	memwr=0;
+	branch=0;
+	memtoreg=0;
+	regwr=1;
+	sign=0;
+	chsresult=0;
+	jump=0;
+	siftop=2'b00;
+	end
+	6'b001010://slti
+	begin
+	extop=1;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b0101;
+	memwr=0;
+	branch=0;
+	memtoreg=0;
+	regwr=1;
+	sign=0;
+	chsresult=0;
+	jump=0;
+	siftop=2'b00;
+	end
+	6'b001011://sltiu
+	begin
+	extop=1;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b0101;
+	memwr=0;
+	branch=0;
+	memtoreg=0;
+	regwr=1;
+	sign=0;
+	chsresult=0;
+	jump=0;
+	siftop=2'b00;
+	end
+	6'b100011://lw
+	begin
+	extop=1;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b0000;
+	memwr=0;
+	branch=0;
+	memtoreg=1;
+	regwr=1;
+	sign=0;
+	chsresult=0;
+	jump=0;
+	wrsrc=0;
+	siftop=2'b00;
+	end
+	6'b101011://sw
+	begin
+	extop=1;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b0000;
+	memwr=1;
+	branch=0;
+	memtoreg=0;
+	regwr=0;
+	sign=0;
+	chsresult=0;
+	jump=0;
+	siftop=2'b00;
+	end
+	6'b010110://lwr
+	begin
+	extop=1;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b0000;
+	memwr=0;
+	branch=0;
+	memtoreg=1;
+	regwr=1;
+	sign=0;
+	chsresult=0;
+	jump=0;
+	wrsrc=1;
+	mergeop=1;
+	siftop=2'b00;
+	end
+	6'b010010://1wl
+	begin
+	extop=1;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b0000;
+	memwr=0;
+	branch=0;
+	memtoreg=1;
+	regwr=1;
+	sign=0;
+	chsresult=0;
+	jump=0;
+	wrsrc=1;
+	mergeop=0;
+	siftop=2'b00;
+	end
+	6'b000110://blez
+	begin
+	extop=1;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b0000;
+	memwr=0;
+	branch=1;
+	memtoreg=0;
+	regwr=0;
+	sign=0;
+	chsresult=0;
+	jump=0;
+	wrsrc=0;
+	mergeop=0;
+	siftop=2'b00;
+	end
+	6'b000010://jump
+	begin
+	extop=1;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b0000;
+	memwr=0;
+	branch=0;
+	memtoreg=0;
+	regwr=0;
+	sign=0;
+	chsresult=0;
+	jump=1;
+	wrsrc=0;
+	mergeop=0;
+	siftop=2'b00;
+	end
+	6'b011100://clz or clo
+		begin
+		extop=1;
+		regdst=1;
+		alusrc=0;
+		memwr=0;
+		memtoreg=0;
+		branch=0;
+		memtoreg=0;
+		regwr=1;
+		sign=0;
+		chsresult=0;
+		jump=0;
+		wrsrc=0;
+		mergeop=0;
+		siftop=2'b00;
+		case(funct)
+		6'b100001://clo
+		aluop=4'b0100;
+		6'b100000://clz
+		aluop=4'b0010;
+		default:aluop=4'b0010;
+		endcase
+		end
+
+6'b000000:
+begin
+extop=1;
+regdst=1;
+alusrc=0;
+memwr=0;
+branch=0;
+memtoreg=0;
+regwr=1;
+wrsrc=0;
+mergeop=0;
+jump=0;
+case(funct)
+6'b100000://add
+	begin
+	aluop=4'b0000;
+	sign=0;
+	siftop=2'b00;
+	chsresult=0;
+	end
+6'b100001://addu
+	begin
+	aluop=4'b0000;
+	sign=1;
+	siftop=2'b00;
+	chsresult=0;
+	end
+6'b100010://sub
+	begin
+	aluop=4'b0001;
+	sign=0;
+	siftop=2'b00;
+	chsresult=0;
+	end
+6'b100011://subu
+	begin
+	aluop=4'b0001;
+	sign=1;
+	siftop=2'b00;
+	chsresult=0;
+	end
+6'b100100://and
+	begin
+	aluop=4'b0100;
+	sign=0;
+	siftop=2'b00;
+	chsresult=0;
+	end
+6'b100101://or
+	begin
+	aluop=4'b0110;
+	sign=0;
+	siftop=2'b00;
+	chsresult=0;
+	end
+6'b100111://nor
+	begin
+	aluop=4'b1000;
+	sign=0;
+	siftop=2'b00;
+	chsresult=0;
+	end
+6'b100110://xor
+	begin
+	aluop=4'b1001;
+	sign=0;
+	siftop=2'b00;
+	chsresult=0;
+	end
+6'b101010://slt
+	begin
+	aluop=4'b0101;
+	sign=0;
+	siftop=2'b00;
+	chsresult=0;
+	end
+6'b101011://sltu
+	begin
+	aluop=4'b0111;
+	sign=1;
+	siftop=2'b00;
+	chsresult=0;
+	end
+6'b000100://sllv
+	begin
+	aluop=4'b0000;
+	sign=0;
+	chsresult=1;
+	siftop=2'b01;
+	siftsrc=0;
+	end
+	
+6'b000011://sra
+	begin
+	aluop=4'b0000;
+	sign=0;
+	chsresult=1;
+	siftop=2'b00;
+	siftsrc=1;
+	end
+default:
+	begin
+	aluop=4'b0000;
+	sign=0;
+	chsresult=0;
+	siftop=2'b00;
+	end
+endcase
+end
+
+default:
+begin
+	
+	extop=1;
+	regdst=0;
+	alusrc=1;
+	aluop=4'b0000;
+	memwr=0;
+	branch=0;
+	memtoreg=0;
+	regwr=1;
+	sign=0;
+	chsresult=0;
+	jump=0;
+	siftop=2'b00;
+end
+endcase
+end
+endmodule
+

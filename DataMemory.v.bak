@@ -1,0 +1,14 @@
+module DataMem
+(
+	input [4:0] RA,
+	input [4:0] WA,
+	input [31:0] Di,
+	input MemWr,
+	output [31:0] Do
+);
+reg [31:0] DataMemory [31:0];
+assign Do = DataMemory[RA];
+always @(WA,Di,MemWr)
+if(MemWr)
+	DataMemory[WA] = Di;
+endmodule
